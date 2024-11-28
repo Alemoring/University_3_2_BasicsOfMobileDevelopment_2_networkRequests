@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/home"
+            android:title="@string/menu_home"
+            android:icon="@drawable/icon_home"/>
+        <item android:id="@+id/history"
+            android:title="@string/menu_history"
+            android:icon="@drawable/icon_history"/>
+        <item android:id="@+id/stock"
+            android:title="@string/menu_stock"
+            android:icon="@drawable/icon_stock"/>
+    </group>
+    <item android:title="@string/menu_profile">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/profile"
+                    android:title="@string/menu_profile"
+                    android:icon="@drawable/icon_profile"/>
+                <item android:id="@+id/logIn"
+                    android:title="@string/menu_login"
+                    android:icon="@drawable/icon_login"/>
+                <item android:id="@+id/logUp"
+                    android:title="@string/menu_logup"
+                    android:icon="@drawable/icon_logup"/>
+                <item android:id="@+id/logout"
+                    android:title="@string/menu_logout"
+                    android:icon="@drawable/icon_logout"/>
+            </group>
+        </menu>
+    </item>
+    <item android:title="Safe">
+        <menu>
+            <item android:id="@+id/support"
+                android:title="@string/menu_support"
+                android:icon="@drawable/icon_support"/>
+            <item android:id="@+id/safety"
+                android:title="@string/menu_safety"
+                android:icon="@drawable/icon_safety"/>
+        </menu>
+    </item>
+</menu>
