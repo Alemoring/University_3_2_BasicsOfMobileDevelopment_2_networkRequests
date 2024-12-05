@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ВелоМотор</string>
     <string name="app_under_name">Девиз</string>
-    
+
     <string name="menu_history">История поездок</string>
     <string name="menu_home">Главная</string>
     <string name="menu_login">Войти</string>
@@ -14,4 +14,6 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!--<string name="android:statusBarColor">#00000000</string>-->
 </resources>
