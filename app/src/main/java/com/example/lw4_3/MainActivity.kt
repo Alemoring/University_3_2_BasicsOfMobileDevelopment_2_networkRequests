@@ -40,8 +40,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             intent = result.data
             var accessMessage = intent.getStringExtra("ACCESS_MESSAGE")
             textView.text = accessMessage
-        } else {
-            textView.text = "Ошибка доступа"
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,6 +100,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.logUp -> {
                 var intent = Intent(binding.root.context, LogUpActivity::class.java)
                 startActivity(intent)
+            }
+            R.id.logout -> {
+                isLogIn = false
+                isLogged()
+                binding.tvAccount.text = "Не вошёл"
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)

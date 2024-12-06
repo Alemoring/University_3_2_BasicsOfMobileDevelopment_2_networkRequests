@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ВелоМотор</string>
-    <string name="app_under_name">Девиз</string>
+    <string name="app_under_name">Свобода движения! Скорость жизни!</string>
 
     <string name="menu_history">История поездок</string>
     <string name="menu_home">Главная</string>

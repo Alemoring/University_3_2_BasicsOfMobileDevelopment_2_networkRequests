@@ -33,6 +33,9 @@ class LogInActivity : AppCompatActivity() {
             val account = accounts.findAccoundByName(name)
             if (account != null){
                 sendMessage(account.name)
+            }else{
+                val dialog = NotInProfilesDialog()
+                dialog.show(supportFragmentManager, "custom")
             }
         })
     }
