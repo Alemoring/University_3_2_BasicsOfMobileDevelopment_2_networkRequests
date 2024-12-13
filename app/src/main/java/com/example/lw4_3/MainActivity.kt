@@ -6,11 +6,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +23,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var _binding: ActivityMainBinding? = null
     val binding
         get() = _binding?: throw IllegalStateException("No binding!")
+
     private var isLogIn = false
     private lateinit var drawerLayout:DrawerLayout
     private lateinit var navigationView:NavigationView
@@ -105,6 +103,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 isLogIn = false
                 isLogged()
                 binding.tvAccount.text = "Не вошёл"
+            }
+            R.id.history -> {
+                var intent = Intent(binding.root.context, RideActivity::class.java)
+                startActivity(intent)
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
