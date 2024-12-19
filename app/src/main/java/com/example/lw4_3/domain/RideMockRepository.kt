@@ -8,7 +8,7 @@ class RideMockRepository {
     init {
         val faker = Faker.instance() // Переменная для создания случайных данных
 
-        rides = (1..10).map {
+        rides = (1..1).map {
             Ride(
                 id = it.toLong(),
                 login = "Alemor",
@@ -39,6 +39,9 @@ class RideMockRepository {
         rides = ArrayList(rides) // Создаем новый список
         rides[index] = Ride(rides.size.toLong(), login, distance)
         notifyChanges()
+    }
+    fun clearRides(){
+        rides = mutableListOf<Ride>()
     }
 
     private var listeners = mutableListOf<RideListener>() // Все слушатели

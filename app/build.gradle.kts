@@ -39,6 +39,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.commons.csv)
+    implementation(libs.itextpdf)
     implementation(libs.javafaker)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

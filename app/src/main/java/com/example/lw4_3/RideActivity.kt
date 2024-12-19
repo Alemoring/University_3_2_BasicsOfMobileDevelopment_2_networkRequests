@@ -4,6 +4,8 @@ import SwipeHelper
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
@@ -19,6 +21,16 @@ import com.example.lw4_3.domain.Ride
 import com.example.lw4_3.domain.RideListener
 import com.example.lw4_3.domain.RideMockRepository
 import kotlin.properties.Delegates
+import com.itextpdf.text.Document
+import com.itextpdf.text.Paragraph
+import com.itextpdf.text.pdf.PdfDocument
+import com.itextpdf.text.pdf.PdfObject
+import com.itextpdf.text.pdf.PdfWriter
+import com.itextpdf.text.pdf.PdfReader
+import com.itextpdf.text.pdf.parser.PdfTextExtractor
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy
+import java.io.FileOutputStream
 
 class RideActivity : AppCompatActivity() {
     private var _binding: ActivityRideBinding? = null
@@ -50,6 +62,40 @@ class RideActivity : AppCompatActivity() {
         enableEdgeToEdge()
         _binding = ActivityRideBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.btnSavePDF.setOnClickListener({
+            var document = Document();
+            var file = binding.root.context.filesDir.path + "/Rides.pdf"
+            PdfWriter.getInstance(document, FileOutputStream(file));
+            document.open();
+            var i = 0;
+            for (el in repository.getRides()){
+                var p = Paragraph(i.toString() + " " + el.id + " " + el.login + " " + el.distance)
+                document.add(p)
+                i++
+            }
+            document.close()
+        })
+
+        binding.btnReadPDF.setOnClickListener({
+            var file = binding.root.context.filesDir.path + "/Rides.pdf"
+            var pdfReader = PdfReader(file)
+            repository.clearRides()
+            for (i in 1 .. pdfReader.numberOfPages){
+                var strategy = SimpleTextExtractionStrategy()
+                var text = PdfTextExtractor.getTextFromPage(pdfReader, i, strategy)
+                var list = text.split('\n')
+                for (el in list){
+                    var listObj = el.split(' ')
+                    repository.createRide(listObj[2].toString(), listObj[3].toString())
+                }
+            }
+            pdfReader.close()
+        })
+
+        binding.btnSaveCSV.setOnClickListener({
+
+        })
 
         val manager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false) // LayoutManager
         adapter = RideAdapter(object : RideActionListener { // Создание объекта

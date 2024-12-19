@@ -12,8 +12,12 @@ constraintlayout = "2.2.0"
 legacySupportV4 = "1.0.0"
 javafaker = "1.0.2"
 foundationAndroid = "1.7.6"
+itextpdf = "5.5.13.4"
+commons-csv = "1.12.0"
 
 [libraries]
+commons-csv = {group = 'org.apache.commons', name = "commons-csv", version.ref="commons-csv"}
+itextpdf = {group = 'com.itextpdf', name = "itextpdf", version.ref = "itextpdf"}
 javafaker = {group = "com.github.javafaker", name = "javafaker", version.ref = "javafaker"}
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
