@@ -37,12 +37,12 @@ class RideAdapter(private val rideActionListener: RideActionListener): RecyclerV
 
         with(holder.binding) {
             loginTextView.text = ride.login // Отрисовка имени пользователя
-            distanceTextView.text = ride.distance + " км" // Отрисовка компании пользователя
+            distanceTextView.text = ride.distance + " км" // Отрисовка дистанции пользователя
         }
     }
 
     override fun onClick(v: View?) {
-        val ride: Ride = v?.tag as Ride // Получаем из тэга человека
+        val ride: Ride = v?.tag as Ride // Получаем из тэга Поездки
 
         when (v.id) {
             R.id.deleteIconView -> rideActionListener.onRideRemove(ride)

@@ -2,15 +2,24 @@ package com.example.lw4_3
 
 import SwipeHelper
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
@@ -31,6 +40,16 @@ import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.Paths
+import org.apache.commons.csv.CSVPrinter
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVParser
+import java.io.File
+import java.io.FileWriter
+import java.io.OutputStream
+import java.sql.ResultSet
+import java.util.Objects
 
 class RideActivity : AppCompatActivity() {
     private var _binding: ActivityRideBinding? = null
@@ -43,6 +62,7 @@ class RideActivity : AppCompatActivity() {
     private lateinit var distance: String
     private lateinit var type: String
     private var pos: Int = 0
+    @RequiresApi(Build.VERSION_CODES.O)
     val startForResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
@@ -52,11 +72,28 @@ class RideActivity : AppCompatActivity() {
             distance = intent.getStringExtra("DISTANCE").toString()
             if (type == "EDIT"){
                 repository.editRide(repository.getRides().get(pos), login, distance)
+
+                var file = binding.root.context.filesDir.path + "/Rides.csv"
+                var writer = Files.newBufferedWriter(Paths.get(file))
+                var csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("ID", "Login", "Distance"))
+                //csvPrinter.printRecord("ID", "Login", "Distance")
+                for (el in repository.getRides()){
+                    csvPrinter.printRecord(el.id, el.login, el.distance)
+                }
+                csvPrinter.flush()
             }else if (type == "ADD"){
                 repository.createRide(login, distance)
+
+                var file = binding.root.context.filesDir.path + "/Rides.csv"
+                var writer = FileWriter(file, true)
+                var csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT)
+                //csvPrinter.printRecord("ID", "Login", "Distance")
+                csvPrinter.printRecord(repository.getRides().size, login, distance)
+                csvPrinter.flush()
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -94,7 +131,31 @@ class RideActivity : AppCompatActivity() {
         })
 
         binding.btnSaveCSV.setOnClickListener({
+            var file = binding.root.context.filesDir.path + "/Rides.csv"
+            var writer = Files.newBufferedWriter(Paths.get(file))
+            var csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("ID", "Login", "Distance"))
+            //csvPrinter.printRecord("ID", "Login", "Distance")
+            for (el in repository.getRides()){
+                csvPrinter.printRecord(el.id, el.login, el.distance)
+            }
+            csvPrinter.flush()
+        })
 
+        binding.btnReadSCV.setOnClickListener({
+            var file = binding.root.context.filesDir.path + "/Rides.csv"
+            var reader = Files.newBufferedReader(Paths.get(file))
+            var csvParser = CSVParser(reader, CSVFormat.DEFAULT)
+            var text = csvParser.records
+            for (i in 1 .. text.size-1){
+                Log.i(i.toString(), text.get(i).toString())
+            }
+        })
+        var iv : ImageView = binding.ivphoto
+        binding.btnPhoto.setOnClickListener({
+            var bitmapDrawable = iv.drawable
+            var bitmap = bitmapDrawable.toBitmap()
+            saveImageToGallery(bitmap)
+            //dispatchTakePictureIntent()
         })
 
         val manager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false) // LayoutManager
@@ -158,5 +219,29 @@ class RideActivity : AppCompatActivity() {
 
         val itemTouchHelper = ItemTouchHelper(swipeHelper)
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+    }
+
+    private fun saveImageToGallery(bitmap: Bitmap) {
+        var os : OutputStream
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            var resolver = contentResolver
+            var contentValues = ContentValues()
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "Image_" + ".jpg")
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + "TestFolder")
+            var imageuri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            os = (Objects.requireNonNull(imageuri)?.let { resolver.openOutputStream(it) }) as OutputStream
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
+            Objects.requireNonNull(os)
+        }
+    }
+
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private fun dispatchTakePictureIntent(){
+        var tekePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (tekePictureIntent.resolveActivity(packageManager) != null){
+            startActivityForResult(tekePictureIntent, REQUEST_IMAGE_CAPTURE)
+        }
     }
 }

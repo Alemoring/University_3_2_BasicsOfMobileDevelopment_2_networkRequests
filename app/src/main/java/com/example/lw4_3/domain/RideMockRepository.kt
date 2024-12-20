@@ -29,7 +29,7 @@ class RideMockRepository {
     }
     fun createRide(login: String, distance: String) {
         rides = ArrayList(rides) // Создаем новый список
-        rides.add(Ride(rides.size.toLong(), login, distance))
+        rides.add(Ride(rides.size.toLong()+1, login, distance))
         notifyChanges()
     }
     fun editRide(ride: Ride, login: String, distance: String) {

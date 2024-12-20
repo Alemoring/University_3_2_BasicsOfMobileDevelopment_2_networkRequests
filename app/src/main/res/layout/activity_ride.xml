@@ -30,17 +30,18 @@
         android:id="@+id/btnSavePDF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
+        android:layout_marginStart="16dp"
         android:text="Save PDF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.398" />
 
     <Button
         android:id="@+id/btnSaveCSV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="39dp"
+        android:layout_marginEnd="16dp"
         android:text="Save CSV"
         app:layout_constraintBaseline_toBaselineOf="@+id/btnSavePDF"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -49,7 +50,7 @@
         android:id="@+id/btnPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="356dp"
         android:text="Make a photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="20dp"
         android:text="Read PDF"
         app:layout_constraintStart_toStartOf="@+id/btnSavePDF"
         app:layout_constraintTop_toBottomOf="@+id/btnSavePDF" />
@@ -69,7 +70,7 @@
         android:id="@+id/btnReadSCV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="6dp"
         android:text="Read CSV"
         app:layout_constraintEnd_toEndOf="@+id/btnSaveCSV"
@@ -79,9 +80,21 @@
         android:id="@+id/btnDeleteSCV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        android:layout_marginEnd="39dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
         android:text="Delete CSV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnReadSCV" />
+
+    <ImageView
+        android:id="@+id/ivphoto"
+        android:layout_width="262dp"
+        android:layout_height="163dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnPhoto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDeleteSCV"
+        android:src="@drawable/millenium_falkom"
+        tools:ignore="ContentDescription"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
