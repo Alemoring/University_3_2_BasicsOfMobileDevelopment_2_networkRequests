@@ -1,4 +1,5 @@
 # Вариант 
 ## Прокат авто и велосипедов
-1) 2 — Navigation Drawer (Navigation)
-2) 2 — Из других окон в начальное (Transfer Data)
+1) 4 — CSV файл в App specific storage
+2) 8 — PDF файл в App specific storage
+3) 12 - MediaStore
