@@ -4,9 +4,9 @@ import SwipeHelper
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteConstraintException
+import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -20,8 +20,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,34 +27,32 @@ import com.example.lw4_3.databinding.ActivityRideBinding
 import com.example.lw4_3.domain.Ride
 import com.example.lw4_3.domain.RideListener
 import com.example.lw4_3.domain.RideMockRepository
-import kotlin.properties.Delegates
+import com.example.lw4_3.domain.RideSQLiteRepository
 import com.itextpdf.text.Document
 import com.itextpdf.text.Paragraph
-import com.itextpdf.text.pdf.PdfDocument
-import com.itextpdf.text.pdf.PdfObject
-import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.pdf.PdfReader
+import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy
-import com.itextpdf.text.pdf.parser.TextExtractionStrategy
-import java.io.FileOutputStream
-import java.nio.file.Files
-import java.nio.file.Paths
-import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.CSVPrinter
 import java.io.File
+import java.io.FileOutputStream
 import java.io.FileWriter
 import java.io.OutputStream
-import java.sql.ResultSet
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.Objects
+
 
 class RideActivity : AppCompatActivity() {
     private var _binding: ActivityRideBinding? = null
     val binding
         get() = _binding?: throw IllegalStateException("No binding!")
     private lateinit var adapter: RideAdapter // Объект Adapter
-    private val repository: RideMockRepository = App.rideRepository
+    private lateinit var repository: RideSQLiteRepository
+    //private val repository: RideMockRepository = App.rideRepository
     private val listener: RideListener = {adapter.data = it}
     private lateinit var login: String
     private lateinit var distance: String
@@ -71,7 +67,12 @@ class RideActivity : AppCompatActivity() {
             login = intent.getStringExtra("LOGIN").toString()
             distance = intent.getStringExtra("DISTANCE").toString()
             if (type == "EDIT"){
-                repository.editRide(repository.getRides().get(pos), login, distance)
+                try{
+                    repository.editRide(repository.getRides().get(pos), login, distance)
+                }catch (e: Exception){
+                    Toast.makeText(applicationContext,"Логина не существует",Toast.LENGTH_LONG).show();
+                }
+
 
                 var file = binding.root.context.filesDir.path + "/Rides.csv"
                 var writer = Files.newBufferedWriter(Paths.get(file))
@@ -82,7 +83,12 @@ class RideActivity : AppCompatActivity() {
                 }
                 csvPrinter.flush()
             }else if (type == "ADD"){
-                repository.createRide(login, distance)
+                try{
+                    repository.createRide(Ride(1, login, distance))
+                }catch (e: Exception){
+                    Toast.makeText(applicationContext,"Логина не существует",Toast.LENGTH_LONG).show()
+                }
+
 
                 var file = binding.root.context.filesDir.path + "/Rides.csv"
                 var writer = FileWriter(file, true)
@@ -100,7 +106,11 @@ class RideActivity : AppCompatActivity() {
         _binding = ActivityRideBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        repository = RideSQLiteRepository(applicationContext)
+        //repository.onCreate(repository.writableDatabase)
+
         binding.btnSavePDF.setOnClickListener({
+            repository.createRide(Ride(1, "Alemor", "123"))
             var document = Document();
             var file = binding.root.context.filesDir.path + "/Rides.pdf"
             PdfWriter.getInstance(document, FileOutputStream(file));
@@ -117,14 +127,14 @@ class RideActivity : AppCompatActivity() {
         binding.btnReadPDF.setOnClickListener({
             var file = binding.root.context.filesDir.path + "/Rides.pdf"
             var pdfReader = PdfReader(file)
-            repository.clearRides()
+            //repository.clearRides()
             for (i in 1 .. pdfReader.numberOfPages){
                 var strategy = SimpleTextExtractionStrategy()
                 var text = PdfTextExtractor.getTextFromPage(pdfReader, i, strategy)
                 var list = text.split('\n')
                 for (el in list){
                     var listObj = el.split(' ')
-                    repository.createRide(listObj[2].toString(), listObj[3].toString())
+                    Log.i(listObj[2].toString(), listObj[3].toString())
                 }
             }
             pdfReader.close()
@@ -163,7 +173,7 @@ class RideActivity : AppCompatActivity() {
             override fun onRideGetId(ride: Ride) =
                 Toast.makeText(this@RideActivity, "Rides ID: ${ride.id}", Toast.LENGTH_SHORT).show()
 
-            override fun onRideAdd(login: String, distance: String) = repository.createRide(login, distance)
+            override fun onRideAdd(login: String, distance: String) = repository.createRide(Ride(1, login, distance))
 
             override fun onRideRemove(ride: Ride) = repository.removeRide(ride)
 

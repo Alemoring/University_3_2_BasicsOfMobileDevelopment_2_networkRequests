@@ -1,20 +1,41 @@
 package com.example.lw4_3.domain
 
+import android.R
+import android.content.Context.MODE_PRIVATE
+import android.database.sqlite.SQLiteDatabase
+import android.widget.TextView
 import com.github.javafaker.Faker
+
 
 class RideMockRepository {
     private var rides = mutableListOf<Ride>() // Все пользователи
 
     init {
-        val faker = Faker.instance() // Переменная для создания случайных данных
 
-        rides = (1..1).map {
-            Ride(
-                id = it.toLong(),
-                login = "Alemor",
-                distance = faker.number().randomNumber().toString()
-            )
-        }.toMutableList()
+        /*val db: SQLiteDatabase = SQLiteDatabase.openOrCreateDatabase("app.db", null)
+        db.execSQL("CREATE TABLE IF NOT EXISTS users (name TEXT, password TEXT, UNIQUE(name))")
+        db.execSQL("CREATE TABLE IF NOT EXISTS rides (id INTEGER PRIMARY KEY AUTOINCREMENT, login TEXT, distance TEXT, FOREIGN KEY (login)  REFERENCES users (name))")
+        db.execSQL("INSERT OR IGNORE INTO users VALUES ('Alemor', '123');")
+        db.execSQL("INSERT OR IGNORE INTO rides(login, distance) VALUES ('Alemor', '123');")
+
+        val query = db.rawQuery("SELECT * FROM rides;", null)
+        while (query.moveToNext()) {
+            val id = query.getInt(0)
+            val login = query.getString(1)
+            val distance = query.getString(2)
+            rides.add(Ride(id.toLong(), login, distance))
+        }
+        query.close()
+        db.close()*/
+        //val faker = Faker.instance() // Переменная для создания случайных данных
+
+//        rides = (1..1).map {
+//            Ride(
+//                id = it.toLong(),
+//                login = "Alemor",
+//                distance = faker.number().randomNumber().toString()
+//            )
+//        }.toMutableList()
     }
     fun getRides(): MutableList<Ride> {
         return rides
@@ -56,7 +77,11 @@ class RideMockRepository {
         listener.invoke(rides)
     }
 
+    fun getUsername() {
+
+    }
+
     private fun notifyChanges() = listeners.forEach { it.invoke(rides) }
 }
 
-typealias RideListener = (rides: List<Ride>) -> Unit
+//typealias RideListener = (rides: List<Ride>) -> Unit
