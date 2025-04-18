@@ -1,4 +1,4 @@
 # Вариант 
 ## Прокат авто и велосипедов
-1) 2 Потока в Login Activity
-2) 2 Корутины в Ride Activity
+1) Два потока в Login Activity
+2) Две корутины в Ride Activity
