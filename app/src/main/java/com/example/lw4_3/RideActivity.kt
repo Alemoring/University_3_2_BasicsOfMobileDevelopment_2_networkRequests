@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -44,9 +45,19 @@ import java.io.OutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Objects
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RideActivity : AppCompatActivity() {
+    // Добавляем области видимости для корутин
+    private val ioScope = CoroutineScope(Dispatchers.IO + Job())
+    private val uiScope = CoroutineScope(Dispatchers.Main + Job())
+
     private var _binding: ActivityRideBinding? = null
     val binding
         get() = _binding?: throw IllegalStateException("No binding!")
@@ -180,7 +191,50 @@ class RideActivity : AppCompatActivity() {
             override fun onRideEdit(ride: Ride, login: String, distance: String) = repository.editRide(ride, login, distance)
 
         }) // Создание объекта
-        adapter.data = repository.getRides() // Заполнение данными
+        adapter.data = emptyList()
+
+        // Две независимые корутины для разных задач
+        ioScope.launch {
+            try {
+                // Показываем прогресс-бар в главном потоке
+                withContext(Dispatchers.Main) {
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+
+                // Имитация загрузки
+                delay(5000)
+
+                // Корутина 1 - Загрузка основных данных
+                val rides = withContext(Dispatchers.IO) {
+                    repository.getRides()
+                }
+
+                // Корутина 2 - Расчет статистики
+                val stats = rides.size
+
+                // Обновляем UI в главном потоке
+                withContext(Dispatchers.Main) {
+                    adapter.data = rides // Обновляем данные адаптера
+                    binding.textViewStats.text = "Всего поездок: $stats" // Обновляем статистику
+                    Log.d("Coroutine", "Data updated")
+                }
+            } catch (e: Exception) {
+                Log.e("Coroutine", "Error with data upload", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@RideActivity,
+                        "Ошибка загрузки данных",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    binding.progressBar2.visibility = View.INVISIBLE
+                }
+            }
+        }
+
+        //adapter.data = repository.getRides() // Заполнение данными
 
         binding.recyclerView.layoutManager = manager // Назначение LayoutManager для RecyclerView
         binding.recyclerView.adapter = adapter // Назначение адаптера для RecyclerView
@@ -229,6 +283,12 @@ class RideActivity : AppCompatActivity() {
 
         val itemTouchHelper = ItemTouchHelper(swipeHelper)
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ioScope.coroutineContext.cancel()
+        uiScope.coroutineContext.cancel()
     }
 
     private fun saveImageToGallery(bitmap: Bitmap) {
