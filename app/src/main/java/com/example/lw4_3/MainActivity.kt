@@ -9,12 +9,16 @@ import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.lw4_3.databinding.ActivityMainBinding
+import com.example.lw4_3.domain.UserViewModel
+import com.example.lw4_3.domain.UserApiService
+import com.example.lw4_3.domain.UserViewModelFactory
 import com.google.android.material.navigation.NavigationView
 
 
@@ -40,6 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             textView.text = accessMessage
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -97,7 +102,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.logUp -> {
                 var intent = Intent(binding.root.context, LogUpActivity::class.java)
-                startActivity(intent)
+                startForResult.launch(intent)
             }
             R.id.logout -> {
                 isLogIn = false
@@ -112,6 +117,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }
 
 

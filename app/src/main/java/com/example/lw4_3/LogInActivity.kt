@@ -127,6 +127,7 @@ class LogInActivity : AppCompatActivity() {
             return UserProfile(
                 account?.name ?: "",
                 account?.password ?: "",
+                account?.mail ?: "",
                 lastLogin = System.currentTimeMillis()
             ).also {
                 Log.i(TAG, "User data prepared successfully")
@@ -157,10 +158,11 @@ class LogInActivity : AppCompatActivity() {
 
 data class UserProfile(
     val username: String,
+    val password: String,
     val email: String,
     val lastLogin: Long
 ) {
     override fun toString(): String {
-        return "UserProfile(username='$username', email='$email', lastLogin=$lastLogin)"
+        return "UserProfile(username='$username', email='$email', password=$password)"
     }
 }

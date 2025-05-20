@@ -1,6 +1,8 @@
-package com.example.lw4_2.domain
+package com.example.lw4_3.domain
 
-class AccountMockRepository {
+import com.example.lw4_2.domain.Account
+
+class AccountNetworkRepository {
     var accounts: ArrayList<Account> = arrayListOf(Account("Alemor", "123", "hardcode@example.com"))
     fun getAllaccounts(): ArrayList<Account> {
         return accounts

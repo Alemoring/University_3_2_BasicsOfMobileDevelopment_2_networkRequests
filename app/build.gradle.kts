@@ -39,6 +39,11 @@ android {
 }
 
 dependencies {
+    implementation(libs.converter.gson)
+    implementation(libs.retrofit)
+    implementation(libs.okhttp) // HTTP/2 поддержка
+    implementation(libs.logging)
+    implementation(libs.gson)
     implementation(libs.commons.csv)
     implementation(libs.itextpdf)
     implementation(libs.javafaker)
